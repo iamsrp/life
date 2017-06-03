@@ -21,14 +21,14 @@ What's happening
 The basic idea of Life is that we have a physical world with various
 properties and laws of motion (friction, gravity, etc.) and creatures bimbling
 about in that world trying to survive. The creatures have the abilty to:
-  o Move about (by "puff"ing in the other direction)
-  o Attack each other
-  o Feed (off dead creatures)
-  o Mate (sexually or asexually)
-  o Attack each other
-  o Shout/hear things
-  o Grow old and die
-  o ...
+  - Move about (by "puff"ing in the other direction)
+  - Attack each other
+  - Feed (off dead creatures)
+  - Mate (sexually or asexually)
+  - Attack each other
+  - Shout/hear things
+  - Grow old and die
+  - ...
 
 These actions and responses etc. are controlled by genes which each creature
 has. You can delve into the code if you care about the details of this; see
@@ -67,8 +67,7 @@ the code (like VisibleCreature) which exist to prevent this and might
 otherwise appear a little pointless.
 
 Also, the code is by no means perfect. This really is something I have been
-messing about with no real end in mind (I dunno if I'll even feel the urge to
-"officially" release it one day) so don't expect much. However, I tried to
+messing about with no real end in mind so don't expect much. However, I tried to
 keep it pretty clean and comment it well enough so that other people can see
 what's going on in there and add to it etc.
 
@@ -76,17 +75,17 @@ what's going on in there and add to it etc.
 Running
 =======
 
-You'll need the Java3d environment (http://java.sun.com/products/java-media/3D/)
+You'll need the Java3d environment (http://www.oracle.com/technetwork/articles/javase/index-jsp-138252.html)
 installed in order for this to run (and Java, of course) but that's about it.
 Build with build.sh and run with run.sh; though you might want to edit the max
 heap size line if you don't have stacks of memory like wot I does. (I'm
 assuming you're on a unix-like box, but there's also run.bat too).
 
-  ./build.sh && ./run.sh
+```./build.sh && ./run.sh```
 
 You can also define certain properties on the command line:
 
-  ./run.sh -Dgravity=0.1 -DairFrictionCoeff=150 -DmaxPopulation=1000
+```./run.sh -Dgravity=0.1 -DairFrictionCoeff=150 -DmaxPopulation=1000```
 
 See the Properties.java file for the full set. The above makes things a lot
 more like an underwater scene (high air friction and low gravity) with lots of
@@ -96,14 +95,3 @@ to compete less); this can be altered by setting the feed interval property.
 In fact, anything which forces competition tends to make things more
 aggressive (e.g. high gravity, meaning there is less "space" for things to
 live in) and vice versa.
-
-
-ToDo
-====
-
-Have other windows open which give stats on the current families and so on.
-
-Have the ability to restore a world from a previously persisted state.
-
-Turn this into a screen saver (and kill the planet by making everyone's CPUs
-grind away to their maximum capacity; I'll probably go to hell as a result).
