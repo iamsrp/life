@@ -1,5 +1,7 @@
 #!/bin/sh
 
+: ${J3D_HOME:=/usr/share/java}
+
 SOURCES="			\
     Action.java			\
     ActionAttack.java		\
@@ -60,4 +62,8 @@ SOURCES="			\
 \rm -f classes/*.class
 
 # Now make
-javac -Xlint:unchecked -classpath /usr/share/java/j3dcore.jar:/usr/share/java/j3dutils.jar:/usr/share/java/vecmath.jar -d classes $SOURCES
+exec javac \
+    -Xlint:unchecked -Xlint:deprecation \
+    -classpath ${J3D_HOME}/j3dcore.jar:${J3D_HOME}/j3dutils.jar:${J3D_HOME}/vecmath.jar \
+    -d classes \
+    $SOURCES

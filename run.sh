@@ -1,8 +1,10 @@
 #!/bin/sh
 
+: ${J3D_HOME:=/usr/share/java}
+
 exec \
-    java -Xms1024m -Xmx6144m \
-        -Djava.library.path=/usr/lib/jni \
-        -classpath classes:/usr/share/java/j3dcore.jar:/usr/share/java/j3dutils.jar:/usr/share/java/vecmath.jar \
-        $@ -XX:+UseCompressedOops -XX:+DoEscapeAnalysis \
+    java -Xms1024m -Xmx8192m \
+        -Dsun.java2d.xrender=false \
+        -classpath classes:${J3D_HOME}/j3dcore.jar:${J3D_HOME}/j3dutils.jar:${J3D_HOME}/vecmath.jar \
+        $@ \
         World

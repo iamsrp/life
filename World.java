@@ -1,10 +1,10 @@
-import java.applet.Applet;
-
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsConfiguration;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -67,6 +67,7 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.JWindow;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -77,7 +78,6 @@ import javax.vecmath.Point3f;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
-import com.sun.j3d.utils.applet.MainFrame;
 import com.sun.j3d.utils.behaviors.mouse.MouseBehavior;
 import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
 import com.sun.j3d.utils.behaviors.mouse.MouseTranslate;
@@ -90,8 +90,7 @@ import com.sun.j3d.utils.universe.ViewingPlatform;
 /**
  * The world in which everything lives.
  */
-public class World 
-    extends Applet
+public class World
 {
     // ============================== Types ==============================
 
@@ -103,7 +102,7 @@ public class World
     {
 	/**
 	 * The deletion behaviour. This is required to remove the object from the
-	 * scene in the behaviour thread. 
+	 * scene in the behaviour thread.
 	 *
 	 * See https://java3d.dev.java.net/issues/show_bug.cgi?id=572
 	 */
@@ -114,7 +113,7 @@ public class World
 	     * Where to remove from?
 	     */
 	    private BranchGroup myRemovalGroup = null;
-	    
+
 	    /**
 	     * Constructor.
 	     */
@@ -141,7 +140,7 @@ public class World
 		// Wake up as soon as possible to check whether we need to remove ourselves
 		super.wakeupOn(new WakeupOnElapsedFrames(1));
 		this.wakeupOn(new WakeupOnElapsedFrames(1));
-	    }	    
+	    }
 
 	    /**
 	     * Schedule for removal.
@@ -181,7 +180,7 @@ public class World
 	 * The origin.
 	 */
 	private static final Point3d ORIGIN = new Point3d(0.0, 0.0 ,0.0);
-	
+
 	/**
 	 * Up direction.
 	 */
@@ -199,11 +198,11 @@ public class World
 	    material.setSpecularColor(new Color3f(0.0f, 0.75f, 0.0f));
 	    HEALTH_GREEN.setMaterial(material);
 
-	    TransparencyAttributes attr = 
+	    TransparencyAttributes attr =
 		new TransparencyAttributes(TransparencyAttributes.BLENDED, 0.25f);
 	    HEALTH_GREEN.setTransparencyAttributes(attr);
 	}
-	
+
 	/**
 	 * The health bar's red appearance.
 	 */
@@ -216,11 +215,11 @@ public class World
 	    material.setSpecularColor(new Color3f(0.50f, 0.0f, 0.0f));
 	    HEALTH_RED.setMaterial(material);
 
-	    TransparencyAttributes attr = 
+	    TransparencyAttributes attr =
 		new TransparencyAttributes(TransparencyAttributes.BLENDED, 0.50f);
 	    HEALTH_RED.setTransparencyAttributes(attr);
 	}
-	
+
 	/**
 	 * The shadow's appearance.
 	 */
@@ -235,11 +234,11 @@ public class World
 	    material.setShininess(128.0f);
 	    SHADOW.setMaterial(material);
 
-	    TransparencyAttributes attr = 
+	    TransparencyAttributes attr =
 		new TransparencyAttributes(TransparencyAttributes.BLENDED, 0.9f);
 	    SHADOW.setTransparencyAttributes(attr);
 	}
-	
+
 	/**
 	 * How much to scale the health bar by.
 	 */
@@ -264,7 +263,7 @@ public class World
 	 * The remover.
 	 */
 	private RemoveBehavior myRemoveBehavior = new RemoveBehavior();
-	
+
 	/**
 	 * The location of this creature in the world.
 	 */
@@ -297,7 +296,7 @@ public class World
 	private TransformGroup myShadowTransformGroup = new TransformGroup();
 
 	/**
-	 * Branch group which the transform lives 
+	 * Branch group which the transform lives
 	 */
 	private BranchGroup myBranchGroup = new BranchGroup();
 
@@ -338,7 +337,7 @@ public class World
 	{
 	    myRemoveBehavior.doRemove(from);
 	}
-	
+
 	/**
 	 * Tell this object to destory its internal datastructures.
 	 */
@@ -380,7 +379,7 @@ public class World
 	{
 	    return myPosition;
 	}
-	
+
 	/**
 	 * Get the velocity.
 	 */
@@ -388,7 +387,7 @@ public class World
 	{
 	    return myVelocity;
 	}
-	
+
 	/**
 	 * Get the speed of this creature.
 	 */
@@ -503,17 +502,17 @@ public class World
 		    }
 		    else {
 			// Specific flip about x,y axis
-			myTransform3D.set(new AxisAngle4d(-myDisplayVelocity.y, 
-							  myDisplayVelocity.x, 
+			myTransform3D.set(new AxisAngle4d(-myDisplayVelocity.y,
+							  myDisplayVelocity.x,
 							  0.0,
 							  Math.acos(myDisplayVelocity.z)));
 		    }
 		}
-		
+
 		// Now move and scale the axis
 		myTransform3D.setTranslation(myPosition);
 		myTransform3D.setScale(getRadius());
-				
+
 		// And set it back
 		myTransformGroup.setTransform(myTransform3D);
 	    }
@@ -626,7 +625,7 @@ public class World
 	    myPosition.x = 0.95 * BOUNDING_BOX_SIZE_M * (Math.random() - 0.5);
 	    myPosition.y = 0.95 * BOUNDING_BOX_SIZE_M * (Math.random() - 0.5);
 	    myPosition.z = 0.20 * BOUNDING_BOX_SIZE_M * (Math.random() - 0.0);
-	    
+
 	    // Random speed
 	    while (myVelocity.lengthSquared() == 0.0) {
 		myVelocity.x = (Math.random() - 0.5);
@@ -679,7 +678,7 @@ public class World
 	/**
 	 * {@inheritDoc}
 	 */
-	private void readObjectNoData() 
+	private void readObjectNoData()
 	    throws ObjectStreamException
 	{
 	    throw new RuntimeException("Can't do this right now...");
@@ -688,7 +687,7 @@ public class World
     }
 
     /**
-     * A creature as it can be seen by other creatures. 
+     * A creature as it can be seen by other creatures.
      *
      * <p>This is a wrapper class so that user can't cast it. This is as a
      * defence against people being underhand if we ever decide to have folks
@@ -717,7 +716,7 @@ public class World
 	{
 	    myWorldCreature = wc;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -725,7 +724,7 @@ public class World
 	{
 	    return myWorldCreature.getPosition();
 	}
-	
+
 	/**
 	 * The ID of this creature.
 	 */
@@ -885,7 +884,7 @@ public class World
     /**
      * The size of the bounding box in meters.
      */
-    private static final double BOUNDING_BOX_SIZE_M = 
+    private static final double BOUNDING_BOX_SIZE_M =
 	Properties.getBoundingBoxSize();
 
     /**
@@ -896,7 +895,7 @@ public class World
     /**
      * The threshold below which we respawn.
      */
-    private static final double RESPAWN_FRACTION = 
+    private static final double RESPAWN_FRACTION =
 	Properties.getRespawnFraction();
 
     /**
@@ -904,13 +903,13 @@ public class World
      */
     private static final int MAX_TICK_AGE = 10000;
 
-    /** 
+    /**
      * The food "family".
      */
     private final int myFoodFamily = Creature.nextFamily();
 
     /**
-     * The friction coeff in this world. 
+     * The friction coeff in this world.
      */
     private double myFrictionCoefficient = Properties.getFrictionCoeff();
 
@@ -980,13 +979,13 @@ public class World
     /**
      * The queue of stepper tasks.
      */
-    private final BlockingQueue<Steppee> mySteppeeQueue = 
+    private final BlockingQueue<Steppee> mySteppeeQueue =
         new ArrayBlockingQueue<Steppee>(2 * MAX_POPULATION);
 
     /**
      * The set of creatures in this world.
      */
-    private Map<Integer,WorldCreature> myCreatures = 
+    private Map<Integer,WorldCreature> myCreatures =
 	new HashMap<Integer,WorldCreature>();
 
     /**
@@ -998,13 +997,13 @@ public class World
      * A cache of VisibleCreatures. We use this since we make brazillions of
      * these things and it kinda clogs up GC stuff.
      */
-    private Map<WorldCreature,VisibleCreature> myVisibleCreatures = 
+    private Map<WorldCreature,VisibleCreature> myVisibleCreatures =
 	new HashMap<WorldCreature,VisibleCreature>();
 
     /**
      * A set of stimuli for a creature to get when it steps.
      */
-    private Map<Integer,Map<Class,Stimulus>> myPendingStimuli = 
+    private Map<Integer,Map<Class,Stimulus>> myPendingStimuli =
 	new HashMap<Integer,Map<Class,Stimulus>>();
 
     /**
@@ -1025,7 +1024,7 @@ public class World
     /**
      * The window in which things are displayed.
      */
-    private SimpleUniverse myUniverse = null;    
+    private SimpleUniverse myUniverse = null;
 
     // =========================== Constructors ============================
 
@@ -1035,13 +1034,13 @@ public class World
     public World()
     {
 	// Init the times to all be the same
-	myLastStepRealMillis      = 
-	    myLastStepWorldMillis = 
-	    myWorldMillis         = 
+	myLastStepRealMillis      =
+	    myLastStepWorldMillis =
+	    myWorldMillis         =
 	    System.currentTimeMillis();
 
-	myLastRespawnMillis  = 
-	    myLastFeedMillis = 
+	myLastRespawnMillis  =
+	    myLastFeedMillis =
 	    0;
 
         // Spawn the worker threads
@@ -1056,7 +1055,7 @@ public class World
 	myDisplay.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
 	myDisplay.setCapability(BranchGroup.ALLOW_CHILDREN_READ);
 	myDisplay.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
- 
+
 	// Params...
 	System.out.println("NUM_THREADS              = " + threads);
 	System.out.println("AIR_FRICTION_COEFFICIENT = " + myAirFrictionCoefficient);
@@ -1073,38 +1072,44 @@ public class World
     // ========================== Public Methods ===========================
 
     /**
-     * {@inheritDoc}
+     * Set up.
      */
-    @Override
     public void init()
     {
-	setLayout(new BorderLayout());
-
-        GraphicsConfiguration config =
+        final GraphicsConfiguration config =
            SimpleUniverse.getPreferredConfiguration();
+        final Rectangle screen = config.getBounds();
+	final Canvas3D canvas  = new Canvas3D(config);
+        final JFrame frame     = new JFrame(config);
 
-	Canvas3D c = new Canvas3D(config);
-	add("Center", c);
+	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        final int size = Math.min(Math.min(1024, screen.width), screen.height);
+	frame.setLayout(new BorderLayout());
+        frame.setSize(new Dimension(size, size));
+        frame.setLocation((screen.width  - size) / 2,
+                          (screen.height - size) / 2);
+        frame.add(canvas);
+        frame.setVisible(true);
 
         // This will move the ViewPlatform back a bit so the
         // objects in the scene can be viewed.
-	myUniverse = new SimpleUniverse(c);
+	myUniverse = new SimpleUniverse(canvas);
 
 	// How far back to draw stuff
 	myUniverse.getViewer().getView().setBackClipDistance(BOUNDING_BOX_SIZE_M * 1000.0);
 
 	// Where I am
-	ViewingPlatform platform = myUniverse.getViewingPlatform();
+	final ViewingPlatform platform = myUniverse.getViewingPlatform();
 	platform.setNominalViewingTransform();
 
 	// Look from above
-	Transform3D look = new Transform3D();
-	look.lookAt(
-	    new Point3d(-BOUNDING_BOX_SIZE_M*0.7, -BOUNDING_BOX_SIZE_M*1.2, BOUNDING_BOX_SIZE_M*1.2),
-	    //new Point3d(-BOUNDING_BOX_SIZE_M*0.07, -BOUNDING_BOX_SIZE_M*0.12, BOUNDING_BOX_SIZE_M*0.12),
-	    new Point3d(0.0, 0.0, 0.0),
-	    new Vector3d(0.0, 0.0, 1.0)
-	);
+	final Transform3D look = new Transform3D();
+	look.lookAt(new Point3d (-BOUNDING_BOX_SIZE_M*0.7,
+                                 -BOUNDING_BOX_SIZE_M*1.2,
+                                  BOUNDING_BOX_SIZE_M*1.2),
+                    new Point3d (0.0, 0.0, 0.0),
+                    new Vector3d(0.0, 0.0, 1.0));
 	look.invert();
 	platform.getViewPlatformTransform().setTransform(look);
 
@@ -1112,23 +1117,23 @@ public class World
 	createSceneGraph();
 
 	// How we will move the world about
-	BranchGroup    root        = new BranchGroup();
-        TransformGroup transformer = new TransformGroup(new Transform3D());
+	final BranchGroup    root        = new BranchGroup();
+        final TransformGroup transformer = new TransformGroup(new Transform3D());
         transformer.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         transformer.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
         root.addChild(transformer);
 
-        MouseRotate    mouseRotate    = new MouseRotate();
-        MouseTranslate mouseTranslate = new MouseTranslate();
-        MouseZoom      mouseZoom      = new MouseZoom(MouseBehavior.INVERT_INPUT);
-	BoundingSphere bounds         = new BoundingSphere(new Point3d(0.0, 0.0, 0.0), 
-							   BOUNDING_BOX_SIZE_M * 1.0);
-        mouseRotate.setTransformGroup(transformer);
-        mouseRotate.setSchedulingBounds(bounds);
-        mouseTranslate.setTransformGroup(transformer);
+        final MouseRotate    mouseRotate    = new MouseRotate();
+        final MouseTranslate mouseTranslate = new MouseTranslate();
+        final MouseZoom      mouseZoom      = new MouseZoom(MouseBehavior.INVERT_INPUT);
+	final BoundingSphere bounds         = new BoundingSphere(new Point3d(0.0, 0.0, 0.0),
+                                                                 BOUNDING_BOX_SIZE_M * 1.0);
+        mouseRotate   .setTransformGroup  (transformer);
+        mouseRotate   .setSchedulingBounds(bounds);
+        mouseTranslate.setTransformGroup  (transformer);
         mouseTranslate.setSchedulingBounds(bounds);
-        mouseZoom.setTransformGroup(transformer);
-        mouseZoom.setSchedulingBounds(bounds);
+        mouseZoom     .setTransformGroup  (transformer);
+        mouseZoom     .setSchedulingBounds(bounds);
 
         root.addChild(mouseTranslate);
         root.addChild(mouseRotate);
@@ -1176,8 +1181,8 @@ public class World
 	// Gravity
         label = new JLabel("Gravity", JLabel.CENTER);
 	label.setAlignmentX(Component.CENTER_ALIGNMENT);
-	slider = new JSlider(JSlider.HORIZONTAL, 
-			     0, 
+	slider = new JSlider(JSlider.HORIZONTAL,
+			     0,
 			     Math.max(100, (int)myGravity*20),
 			     (int)(myGravity*20));
 	slider.addChangeListener(
@@ -1199,7 +1204,7 @@ public class World
 	// Air friction
         label = new JLabel("Air Friction", JLabel.CENTER);
 	label.setAlignmentX(Component.CENTER_ALIGNMENT);
-	slider = new JSlider(JSlider.HORIZONTAL, 
+	slider = new JSlider(JSlider.HORIZONTAL,
 			     0,
 			     Math.max(100, (int)myAirFrictionCoefficient),
 			     (int)myAirFrictionCoefficient);
@@ -1245,8 +1250,8 @@ public class World
 	// Feed interval
         label = new JLabel("Feed Interval", JLabel.CENTER);
 	label.setAlignmentX(Component.CENTER_ALIGNMENT);
-	slider = new JSlider(JSlider.HORIZONTAL, 
-			     1, 
+	slider = new JSlider(JSlider.HORIZONTAL,
+			     1,
 			     Math.max(100, (int)myFeedIntervalMillis/1000),
 			     (int)(myFeedIntervalMillis/1000));
 	slider.addChangeListener(
@@ -1268,8 +1273,8 @@ public class World
 	// Respawn interval
         label = new JLabel("Respawn Interval", JLabel.CENTER);
 	label.setAlignmentX(Component.CENTER_ALIGNMENT);
-	slider = new JSlider(JSlider.HORIZONTAL, 
-			     0, 
+	slider = new JSlider(JSlider.HORIZONTAL,
+			     0,
 			     Math.max(100, (int)myRespawnIntervalMillis/1000),
 			     (int)(myRespawnIntervalMillis/1000));
 	slider.addChangeListener(
@@ -1366,7 +1371,7 @@ public class World
 	    }
 	}
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -1405,7 +1410,7 @@ public class World
     /**
      * Create the scene which things live in.
      */
-    private BranchGroup createSceneGraph() 
+    private BranchGroup createSceneGraph()
     {
 	// -------------------------------------------------------------------
 
@@ -1416,8 +1421,8 @@ public class World
 			    new Point3d( bb,  bb,  bb));
 
 	Color3f lightColour = new Color3f(1.0f, 1.0f, 1.0f);
-	DirectionalLight directionalLight = 
-	    new DirectionalLight(lightColour, 
+	DirectionalLight directionalLight =
+	    new DirectionalLight(lightColour,
 				 new Vector3f(-0.2f, -0.2f, -1.0f));
 	directionalLight.setInfluencingBounds(bounds);
 	AmbientLight ambientLight = new AmbientLight(lightColour);
@@ -1436,7 +1441,7 @@ public class World
 	BranchGroup            floorBg = new BranchGroup();
 	Appearance             floorAp = new Appearance();
 	ColoringAttributes     floorCa = new ColoringAttributes();
-        TransparencyAttributes floorTa = 
+        TransparencyAttributes floorTa =
             new TransparencyAttributes(TransparencyAttributes.BLENDED, 0.25f);
 
 	floorPs.setTranslation(new Vector3d(0.0, 0.0, -5.0));
@@ -1445,9 +1450,9 @@ public class World
         floorAp.setTransparencyAttributes(floorTa);
 	floorTg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 	floorTg.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
-	floorTg.addChild(new Box((float)BOUNDING_BOX_SIZE_M / 2.0f, 
+	floorTg.addChild(new Box((float)BOUNDING_BOX_SIZE_M / 2.0f,
 				 (float)BOUNDING_BOX_SIZE_M / 2.0f,
-				 (float)1.0f, 
+				 (float)1.0f,
 				 floorAp));
 	floorTg.setTransform(floorPs);
 	floorBg.addChild(floorTg);
@@ -1541,7 +1546,7 @@ public class World
 	if (myLoadedCreatures != null) {
 	    Map<Integer,WorldCreature> newCreatures = myLoadedCreatures;
 	    myLoadedCreatures = null;
-	    
+
 	    // Swap the two sets around
 	    List<Integer> ids = new ArrayList<Integer>();
 	    for (WorldCreature creature : myCreatures.values()) {
@@ -1630,7 +1635,7 @@ public class World
 	    else {
 		// Time to kill?
 		if (creature.getCreature().getPublicBody().isAlive() &&
-		    creature.getCreature().getTickAge() > MAX_TICK_AGE) 
+		    creature.getCreature().getTickAge() > MAX_TICK_AGE)
 		{
 		    creature.getCreature().kill();
 		}
@@ -1708,8 +1713,8 @@ public class World
         if (actions != null && neighbourhood != null) {
             // Step the creature (i.e. give it a chance to do
             // something)
-            Collection<VisibleCreature> neighbours = 
-                neighbourhood.get(creature.getPosition(), 
+            Collection<VisibleCreature> neighbours =
+                neighbourhood.get(creature.getPosition(),
                                   creature.getViewRadius());
 
             // Restrict the view to a "random" subset?
@@ -1765,7 +1770,7 @@ public class World
      * Step this creature on one (or more, depending on how much time has
      * passed).
      */
-    private List<Action> stepCreature(final WorldCreature creature, 
+    private List<Action> stepCreature(final WorldCreature creature,
 				      final Collection<VisibleCreature> neighbours)
     {
 	// We step this creature only if enough time has passed for its
@@ -1795,7 +1800,7 @@ public class World
 	    stimuli.putAll(pending);
 	    pending.clear();
 	}
-	
+
 	// Step it on one and handle any actions
 	return creature.getCreature().step(stimuli);
     }
@@ -1810,7 +1815,7 @@ public class World
 	}
 
 	// How many millis have elapsed since the last time we ticked
-	final double secondsPassed = 
+	final double secondsPassed =
 	    (double)(myWorldMillis - myLastStepWorldMillis) / 1000.0;
 
 	// The mass and weight of the creature
@@ -1823,7 +1828,7 @@ public class World
 	// errors, when they are supposed to be stationary and sitting on the
 	// ground.
 	if (creature.getVelocity().z < myGravity * MAX_TICK_TIME_MS / 1000) {
-	    final double gravStep = 
+	    final double gravStep =
 		myGravity * MAX_TICK_TIME_MS * MAX_TICK_TIME_MS / 1000 / 1000;
 	    if (Math.abs(creature.getPosition().z) < gravStep) {
 		creature.getPosition().z = 0.0;
@@ -1832,8 +1837,8 @@ public class World
 
 	// First we figure out if we need to apply any friction
 	Vector3d frictionForceVector = new Vector3d();
-	if (myFrictionCoefficient > 0.0 && 
-	    creature.getPosition().z == 0.0 && 
+	if (myFrictionCoefficient > 0.0 &&
+	    creature.getPosition().z == 0.0 &&
 	    creature.getSpeed() > 0.0)
 	{
 	    // Yes, we can apply friction
@@ -1861,7 +1866,7 @@ public class World
 	    // air (which is currently stationary)
 	    final double area = Math.PI * creature.getRadius() * creature.getRadius();
 	    final double density = getAirDensity(creature.getPosition().z);
-	    final double frictionForce = 
+	    final double frictionForce =
 		myAirFrictionCoefficient * density * area * creature.getSpeed();
 
 	    // The friction will act in the opposite direction to the velocity
@@ -1884,8 +1889,8 @@ public class World
 	    frictionForceVector.scale(1.0 / mass);
 
 	    // Now we turn that into a velocity (which we will apply as a difference)
-	    frictionForceVector.scale(secondsPassed); 
-	    
+	    frictionForceVector.scale(secondsPassed);
+
 	    // However, we make sure not to push the thing backwards! That
 	    // would just be silly. Owing to the discrete nature of time in
 	    // this world this is a problem though.
@@ -1904,7 +1909,7 @@ public class World
 	// is constant for any mass.
 	if (creature.getPosition().z > 0.0) {
 	    Vector3d gravity = new Vector3d(0.0, 0.0, -myGravity);
-	
+
 	    // Now turn it into a velocity change
 	    gravity.scale(secondsPassed);
 
@@ -1926,7 +1931,7 @@ public class World
 	    creature.getVelocity().normalize();
 	    creature.getVelocity().scale(MAX_SPEED);
 	}
-	
+
 	if (LOG.isLoggable(Level.FINEST)) {
 	    LOG.finest(myWorldMillis + ": Moving " + creature);
 	}
@@ -2015,7 +2020,7 @@ public class World
     /**
      * Handle any actions from this creature.
      */
-    private void handleActions(final WorldCreature creature, 
+    private void handleActions(final WorldCreature creature,
 			       List<Action> actions,
 			       KDTree<VisibleCreature> tree)
     {
@@ -2049,7 +2054,7 @@ public class World
 
 		// Find our victim which should be alive right now
 		WorldCreature victim = myCreatures.get(attack.id);
-		if (victim != null && victim.getCreature().getPublicBody().isAlive() && 
+		if (victim != null && victim.getCreature().getPublicBody().isAlive() &&
 		    victim.getCreature().getId() != creature.getCreature().getId())
 		{
 		    // Make sure it's within range
@@ -2059,9 +2064,9 @@ public class World
 		    if (dist.lengthSquared() < radii * radii) {
 			// Okay we can attack this guy; this will remove some
 			// energy from them
-			final double creatureMass = 
+			final double creatureMass =
 			    creature.getCreature().getPublicBody().getMassKg();
-			final double victimMass = 
+			final double victimMass =
 			    victim.getCreature().getPublicBody().getMassKg();
 
 			// The heavier we are the more we can attack someone
@@ -2075,9 +2080,9 @@ public class World
 
 			if (energy > 0.0) {
 			    victim.getCreature().getPublicBody().removeEnergy(energy);
-			    
+
 			    // This creature should remember it was attacked now
-			    sendAttackStimulus(victim, creature, 
+			    sendAttackStimulus(victim, creature,
 					       energy / victim.getCreature().getPublicBody().getEnergy());
 			}
 		    }
@@ -2089,8 +2094,8 @@ public class World
 
 		// Find our victim
 		WorldCreature food = myCreatures.get(feed.id);
-		if (food != null && !food.getCreature().getPublicBody().isAlive() && 
-		    food.getCreature().getId() != creature.getCreature().getId()) 
+		if (food != null && !food.getCreature().getPublicBody().isAlive() &&
+		    food.getCreature().getId() != creature.getCreature().getId())
 		{
 		    // Make sure it's within range
 		    final Vector3d dist = new Vector3d(food.getPosition());
@@ -2099,7 +2104,7 @@ public class World
 		    if (dist.lengthSquared() < radii * radii) {
 			// Okay we can feed from this guy, figure out how much
 			// food we can take
-			final double needEnergy = 
+			final double needEnergy =
 			    creature.getCreature().getPublicBody().maxEnergy() -
 			    creature.getCreature().getPublicBody().getEnergy();
 			final double mass =
@@ -2110,7 +2115,7 @@ public class World
 	    }
 	    else if (action instanceof ActionMate) {
 		// Who's around this guy
-		Collection<VisibleCreature> neighbours = 
+		Collection<VisibleCreature> neighbours =
 		    tree.get(creature.getPosition(), creature.getViewRadius());
 		if (canSpawn(creature, neighbours)) {
 		    // How we shag!
@@ -2119,8 +2124,8 @@ public class World
 		    // Find our partner which should be alive right now and a
 		    // member of the same family
 		    WorldCreature partner = myCreatures.get(mate.id);
-		    if (partner != null && partner.getCreature().getPublicBody().isAlive() && 
-			partner.getCreature().getId() != creature.getCreature().getId() && 
+		    if (partner != null && partner.getCreature().getPublicBody().isAlive() &&
+			partner.getCreature().getId() != creature.getCreature().getId() &&
 			partner.getCreature().getFamily() == creature.getCreature().getFamily())
 		    {
 			// Make sure it's within range
@@ -2129,13 +2134,13 @@ public class World
 			final double radii = creature.getRadius() + partner.getRadius();
 			if (dist.lengthSquared() < radii * radii) {
 			    // Attempt to create it
-			    Creature child = 
+			    Creature child =
 				creature.getCreature().mate(partner.getCreature(),
 							    mate.baseMass);
 			    child.getPublicBody().addEnergy(mate.energy);
 
 			    // Conservation of momentum
-			    final double momentum = 
+			    final double momentum =
 				child.getPublicBody().getMassKg() * mate.velocity.length();
 			    if (!Double.isNaN(momentum) && momentum > 0.0) {
 				// This essentially becomes a force in the opposite
@@ -2143,9 +2148,9 @@ public class World
 				Vector3d velChange = new Vector3d(mate.velocity);
 				velChange.normalize();
 				velChange.negate();
-		    
+
 				// The speed imparted to the creature depends on its mass
-				final double speed = 
+				final double speed =
 				    momentum / creature.getCreature().getPublicBody().getMassKg();
 				velChange.scale(speed);
 
@@ -2185,7 +2190,7 @@ public class World
 		    Vector3d velChange = new Vector3d(puff.velocity);
 		    velChange.normalize();
 		    velChange.negate();
-		    
+
 		    // Let the change be some factor of the max speed
 		    velChange.scale(MAX_SPEED / 100.0 * speed);
 
@@ -2196,7 +2201,7 @@ public class World
 		    // creature here; this formula is a little random but
 		    // tries to vaguely penalise people for being fat bastards
 		    final double energy = speed * creature.getRadius() * creature.getRadius();
-		    creature.getCreature().getPublicBody().removeEnergy(energy);		    
+		    creature.getCreature().getPublicBody().removeEnergy(energy);
 		}
 	    }
 	    else if (action instanceof ActionSelfDestruct) {
@@ -2218,12 +2223,12 @@ public class World
 		//   e = energy / (dist^2)
 		// then it will be sqrt(energy/min).
 		final double radius = Math.sqrt(Math.max(0.0, energy) / minEnergy);
-		
+
 		// Now we can send the nuke to these guys
 		for (VisibleCreature dest : tree.get(creature.getPosition(), radius)) {
 		    // Find it and make sure it's alive and not me
 		    WorldCreature victim = myCreatures.get(dest.getId());
-		    if (victim != null && victim.getCreature().getPublicBody().isAlive() && 
+		    if (victim != null && victim.getCreature().getPublicBody().isAlive() &&
 			victim.getCreature().getId() != creature.getCreature().getId())
 		    {
 			// Figure out the distance away
@@ -2232,18 +2237,18 @@ public class World
 
 			// How much energy it loses
 			final double amount = energy / Math.max(1.0, dir.lengthSquared());
-		    
+
 			// Now we can remove this amount of energy
 			victim.getCreature().getPublicBody().removeEnergy(amount);
 
 			// Let this creature know that it was attacked
-			sendAttackStimulus(victim, creature, 
+			sendAttackStimulus(victim, creature,
 					   energy / victim.getCreature().getPublicBody().getEnergy());
 
 			// Impart kinetic energy too (a little random I guess!); e=mv^2
 			if (dir.lengthSquared() > 0.0) {
 			    dir.normalize();
-			    final double speed = 
+			    final double speed =
 				Math.sqrt(amount / creature.getCreature().getPublicBody().getMassKg());
 			    dir.scale(speed);
 
@@ -2256,7 +2261,7 @@ public class World
 		// Finally we effectively remove this creature from the
 		// universe by zeroing out everything
 		creature.getCreature().getPublicBody().removeEnergy(Double.MAX_VALUE);
-		creature.getCreature().getPublicBody().feedFrom(Double.MAX_VALUE);		
+		creature.getCreature().getPublicBody().feedFrom(Double.MAX_VALUE);
 	    }
 	    else if (action instanceof ActionShout) {
  		// What was emitted
@@ -2269,19 +2274,19 @@ public class World
 	    }
 	    else if (action instanceof ActionSpawn) {
 		// Who's around this guy
-		Collection<VisibleCreature> neighbours = 
+		Collection<VisibleCreature> neighbours =
 		    tree.get(creature.getPosition(), creature.getViewRadius());
 		if (canSpawn(creature, neighbours)) {
 		    // How we want to spawn
 		    ActionSpawn spawn = (ActionSpawn)action;
 
 		    // Attempt to create it
-		    Creature child = 
+		    Creature child =
 			creature.getCreature().spawn(Math.min(MAX_MASS, spawn.baseMass));
 		    child.getPublicBody().addEnergy(spawn.energy);
 
 		    // Conservation of momentum
-		    final double momentum = 
+		    final double momentum =
 			child.getPublicBody().getMassKg() * spawn.velocity.length();
 		    if (!Double.isNaN(momentum) && momentum > 0.0) {
 			// This essentially becomes a force in the opposite
@@ -2289,9 +2294,9 @@ public class World
 			Vector3d velChange = new Vector3d(spawn.velocity);
 			velChange.normalize();
 			velChange.negate();
-		    
+
 			// The speed imparted to the creature depends on its mass
-			final double speed = 
+			final double speed =
 			    momentum / creature.getCreature().getPublicBody().getMassKg();
 			velChange.scale(speed);
 
@@ -2383,7 +2388,7 @@ public class World
     /**
      * Can a creature spawn?
      */
-    private boolean canSpawn(WorldCreature creature, 
+    private boolean canSpawn(WorldCreature creature,
 			     Collection<VisibleCreature> neighbours)
     {
 	return (myCreatures.size() < myMaxPopulation * 5 &&
@@ -2444,7 +2449,7 @@ public class World
 		continue;
 	    }
 	    total++;
-	    
+
 	    int family = c.getCreature().getFamily();
 	    Integer count = histo.get(family);
 	    if (count == null) count = 0;
@@ -2455,10 +2460,10 @@ public class World
 		which = family;
 	    }
 	}
-	
+
 	// Break up the dominating family?
 	if (total > 0 && which > 0 &&
-	    total > (int)(myMaxPopulation * 0.1) && 
+	    total > (int)(myMaxPopulation * 0.1) &&
 	    (double)max/(double)total > 0.9)
 	{
 	    final int numNew = 3;
@@ -2493,7 +2498,7 @@ public class World
 
 	// How much room for critters
 	final int space = (myMaxPopulation - count);
-	if (count < (int)(myMaxPopulation * RESPAWN_FRACTION) && 
+	if (count < (int)(myMaxPopulation * RESPAWN_FRACTION) &&
 	    myWorldMillis - myLastRespawnMillis > myRespawnIntervalMillis)
 	{
 	    // Repopulate with other creatures
@@ -2552,7 +2557,7 @@ public class World
 
 	    System.out.println("  " +
 			       "Family " + family + " " +
-			       "count " + pop.get(family) + ": " + 
+			       "count " + pop.get(family) + ": " +
 			       ((wc == null) ? "???" : wc.getCreature().allToString()));
 	}
     }
@@ -2571,7 +2576,7 @@ public class World
 	    new Formatter() {
 		public String format(LogRecord r) {
 		    return
-			r.getLevel() + " " + 
+			r.getLevel() + " " +
 			r.getSourceClassName() + "#" + r.getSourceMethodName() + ": " +
 			r.getMessage();
 		}
@@ -2585,7 +2590,7 @@ public class World
 
 	// Let's go!
 	World world = new World();
-	new MainFrame(world, 256, 256);
+        world.init();
 	world.run();
     }
 }
